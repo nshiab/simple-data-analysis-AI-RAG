@@ -1,0 +1,8 @@
+# Added by setup-sda
+node_modules
+.tmp
+.sda-cache
+.journalism-cache
+.env
+.DS_Store
+output
