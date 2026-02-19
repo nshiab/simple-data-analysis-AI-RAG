@@ -9,7 +9,7 @@ language.
 The default dataset is a list of AI-generated recipes. Here's an example query
 and result.
 
-```bash
+```
 🔍 Question:
 I love pastries, but I am allergic to eggs. What could I bake?
 
