@@ -55,8 +55,8 @@ AI_EMBEDDINGS_MODEL=nomic-embed-text # Feel free to test others
 ```
 
 - Install all dependencies: `deno install`
-- Run `deno task server` in a first terminal to load and keep the DB in memory.
-  The first time it runs, it will take longer to create, cache and index the
+- Run `deno task server` in one terminal to load and keep the DB in memory. The
+  first time it runs, it will take longer to create, cache and index the
   vectors. After that, it will be very fast.
 - Run `deno task query` in another terminal to ask a default question. The first
   time, it will load the LLM in memory. After that, it will be faster. Ollama
@@ -73,6 +73,9 @@ To run custom queries:
   pass to the LLM (default is 10):
   `deno task query "I am looking for a pastry with herbal flavours." -t high -n 5`
 
+If you want to have a look at the data, run `deno task sda` to run `main.ts` in
+watch mode.
+
 ## Using APIs
 
 If you want to use Gemini or Vertex, update your `.env` with these values:
@@ -85,8 +88,16 @@ AI_LOCATION=your_project_location # For Vertex
 AI_EMBEDDINGS_MODEL=gemini-embedding-001 # Or other
 ```
 
+For Vertex, you'll need to be authenticated with
+[Google Cloud CLI on your machine](https://docs.cloud.google.com/docs/authentication/gcloud).
+
 If you want to use an Ollama embedding model but a Gemini LLM, set the
 `ollamaEmbeddings` option to `true` for the `aiRag()` method.
+
+For more information, check the
+[simple-data-analysis documentation](https://jsr.io/@nshiab/simple-data-analysis),
+more specifically the
+[aiRAG method](https://jsr.io/@nshiab/simple-data-analysis/doc/~/SimpleTable.prototype.aiRAG).
 
 ## Questions? Comments?
 
