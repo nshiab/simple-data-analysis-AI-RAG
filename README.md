@@ -78,6 +78,8 @@ watch mode. You can also use this script to create/process new data and write to
 disk. Then update the variables at the beginning of `server.ts` to use your
 dataset.
 
+If you want to start fresh and remove the cache, run `deno task clean`.
+
 ## Using APIs
 
 If you want to use Gemini or Vertex, update your `.env` with these values:
