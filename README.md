@@ -96,8 +96,9 @@ AI_EMBEDDINGS_MODEL=gemini-embedding-001 # Or other
 For Vertex, you'll need to be authenticated with
 [Google Cloud CLI on your machine](https://docs.cloud.google.com/docs/authentication/gcloud).
 
-If you want to use an Ollama embedding model but a Gemini LLM, set the
-`ollamaEmbeddings` option to `true` for the `aiRag()` method.
+If you want to use an Ollama embedding model but a Gemini LLM, uncomment the
+`Ollama` option for the `aiEmbeddings` method and the `ollamaEmbeddings` option
+for the `aiRAG` method, both in the `server.ts` file.
 
 For more information, check the
 [simple-data-analysis documentation](https://jsr.io/@nshiab/simple-data-analysis),

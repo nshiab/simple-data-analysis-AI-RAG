@@ -30,6 +30,7 @@ async function initDB() {
       cache: true,
       createIndex: true,
       verbose: true,
+      // ollama: true // Uncomment if using Ollama for embeddings but Gemini for LLM
     });
     // Make sure DB is saved with embeddings index
     await sdb.done();
