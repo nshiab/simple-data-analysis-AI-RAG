@@ -39,7 +39,7 @@ Both can be made without any egg ingredients, so they would be suitable options 
 
 ## How to run
 
-- Fork this repository
+- Fork and then clone this repository
 - Install [Deno](https://deno.com/)
 - Install [Ollama](https://ollama.com/)
 - Pull the [nomic-embed-text](https://ollama.com/library/nomic-embed-text) model
