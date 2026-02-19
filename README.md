@@ -55,12 +55,12 @@ AI_EMBEDDINGS_MODEL=nomic-embed-text # Feel free to test others
 ```
 
 - Install all dependencies: `deno install`
-- Run `server.ts` in a first terminal to load and keep the DB in memory:
-  `deno task server`. The first time it runs, it will take longer to create,
-  cache and index the vectors. After that, it will be very fast.
-- Run `client.ts` in another terminal to ask a default question:
-  `deno task query`. The first time, it will load the LLM in memory. After that,
-  it will be faster. Ollama keeps models in memory for 5 minutes by default.
+- Run `deno task server` in a first terminal to load and keep the DB in memory.
+  The first time it runs, it will take longer to create, cache and index the
+  vectors. After that, it will be very fast.
+- Run `deno task query` in another terminal to ask a default question. The first
+  time, it will load the LLM in memory. After that, it will be faster. Ollama
+  keeps models in memory for 5 minutes by default.
 
 To run custom queries:
 
