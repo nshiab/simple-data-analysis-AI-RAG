@@ -74,7 +74,9 @@ To run custom queries:
   `deno task query "I am looking for a pastry with herbal flavours." -t high -n 5`
 
 If you want to have a look at the data, run `deno task sda` to run `main.ts` in
-watch mode.
+watch mode. You can also use this script to create/process new data and write to
+disk. Then update the variables at the beginning of `server.ts` to use your
+dataset.
 
 ## Using APIs
 
