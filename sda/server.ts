@@ -1,46 +1,42 @@
-import { existsSync, mkdirSync } from "node:fs";
 import { SimpleDB, SimpleTable } from "@nshiab/simple-data-analysis";
 import { prettyDuration } from "@nshiab/journalism";
 
-// Update these as needed
-const dbPath = "sda/output/database.db";
-const dataPath = "sda/data/recipes.parquet";
-const columnToEmbed = "Recipe";
-const modelContextWindow = 128_000; // Just for Ollama models
+/**
+ * Server that keeps the database in memory and handles RAG queries from clients.
+ * Note: You must run the `data.ts` script first to create the database file.
+ */
 
-// Global variables to hold DB and table in memory
+// Request body interfaces
+interface QueryRequest {
+  question: string;
+  nbResults?: number;
+  thinking?: "minimal" | "low" | "medium" | "high";
+}
+
+interface DataRequest {
+  question: string;
+  nbResults?: number;
+}
+
+// Global variables to hold the DB and table in memory
 let sdb: SimpleDB;
 let table: SimpleTable;
 
-// Initialize DB on server startup
-async function initDB() {
-  const start = Date.now();
-  console.log("🔄 Initializing database...");
-
-  if (!existsSync(dbPath)) {
-    console.log("📦 Creating new database...");
-    if (!existsSync("sda/output")) {
-      mkdirSync("sda/output", { recursive: true });
-    }
-    sdb = new SimpleDB({ file: dbPath });
-    table = sdb.newTable("recipes");
-    // Load data and create embeddings
-    await table.loadData(dataPath);
-    await table.aiEmbeddings(columnToEmbed, `${columnToEmbed}_embedding`, {
-      cache: true,
-      createIndex: true,
-      verbose: true,
-      // ollama: true // Uncomment if using Ollama for embeddings but Gemini for LLM
-    });
-    // Make sure DB is saved with embeddings index
-    await sdb.done();
-    console.log("✅ Database created and saved with embeddings index.");
+/**
+ * Initializes the database by loading it from disk into memory
+ */
+async function initDB(): Promise<void> {
+  // Retrieve environment variables
+  const dbPath = Deno.env.get("DB_PATH");
+  if (!dbPath) {
+    throw new Error("DB_PATH environment variable is not set");
   }
 
-  console.log("📂 Loading existing database...");
+  const start = Date.now();
+  console.log("📂 Loading database...");
   sdb = new SimpleDB();
   await sdb.loadDB(dbPath);
-  table = await sdb.getTable("recipes");
+  table = await sdb.getTable("data");
   prettyDuration(start, {
     log: true,
     prefix: "✅ DB loaded in: ",
@@ -49,23 +45,19 @@ async function initDB() {
   console.log("🚀 Server ready to handle queries!");
 }
 
-// Handle incoming HTTP requests
+/**
+ * Handles incoming HTTP requests for RAG queries and data retrieval
+ * @param req - The incoming HTTP request
+ * @returns Response with the query result or error
+ */
 async function handler(req: Request): Promise<Response> {
   const url = new URL(req.url);
-
-  // Health check endpoint
-  if (url.pathname === "/health") {
-    return new Response(JSON.stringify({ status: "ok" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
 
   // RAG query endpoint
   if (url.pathname === "/query" && req.method === "POST") {
     try {
-      const body = await req.json();
-      const { question, nbResults = 10, thinking = "minimal" } = body;
+      const body: QueryRequest = await req.json();
+      const { question, nbResults = 10, thinking } = body;
 
       if (!question) {
         return new Response(
@@ -77,19 +69,38 @@ async function handler(req: Request): Promise<Response> {
         );
       }
 
-      console.log(`🔍 Query: "${question}" (thinking: ${thinking})`);
+      console.log(
+        `🔍 Query: "${question}" (nbResults: ${nbResults}, model: ${
+          Deno.env.get("AI_MODEL")
+        }, thinking: ${thinking ?? "default"})`,
+      );
       const start = Date.now();
+
+      // Retrieve environment variables
+      const columnId = Deno.env.get("COLUMN_ID");
+      const columnText = Deno.env.get("COLUMN_TEXT");
+      if (!columnId || !columnText) {
+        throw new Error(
+          "COLUMN_ID and COLUMN_TEXT environment variables must be set",
+        );
+      }
+
+      // Optional parameter
+      const modelContextWindow = Deno.env.get("MODEL_CONTEXT_WINDOW")
+        ? parseInt(Deno.env.get("MODEL_CONTEXT_WINDOW") as string)
+        : undefined;
 
       const answer = await table.aiRAG(
         question,
-        columnToEmbed,
+        columnId,
+        columnText,
         nbResults,
         {
           cache: true,
           verbose: true,
           thinkingLevel: thinking,
           modelContextWindow,
-          // ollamaEmbeddings: true // Uncomment if using Ollama for embeddings but Gemini for LLM
+          ollamaEmbeddings: true, // This forces to use Ollama embeddings even if using Gemini/Vertex for the LLM
         },
       );
 
@@ -121,14 +132,99 @@ async function handler(req: Request): Promise<Response> {
     }
   }
 
+  // Data endpoint
+  if (url.pathname === "/data" && req.method === "POST") {
+    try {
+      const body: DataRequest = await req.json();
+      const { question, nbResults = 10 } = body;
+
+      if (!question) {
+        return new Response(
+          JSON.stringify({ error: "Missing 'question' field" }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      console.log(
+        `📊 Data query: "${question}" (nbResults: ${nbResults})`,
+      );
+      const start = Date.now();
+
+      // Retrieve environment variables
+      const columnId = Deno.env.get("COLUMN_ID");
+      const columnText = Deno.env.get("COLUMN_TEXT");
+      if (!columnId || !columnText) {
+        throw new Error(
+          "COLUMN_ID and COLUMN_TEXT environment variables must be set",
+        );
+      }
+
+      // Optional parameter
+      const modelContextWindow = Deno.env.get("MODEL_CONTEXT_WINDOW")
+        ? parseInt(Deno.env.get("MODEL_CONTEXT_WINDOW") as string)
+        : undefined;
+
+      // Get similar documents using vector search
+      const resultsTable = await table.hybridSearch(
+        question,
+        columnId,
+        columnText,
+        nbResults,
+        {
+          cache: true,
+          verbose: true,
+          embeddingsModelContextWindow: modelContextWindow,
+          ollamaEmbeddings: true, // This forces to use Ollama embeddings even if using Gemini/Vertex for the LLM
+          outputTable: `${table.name}_search_results`,
+        },
+      );
+
+      const results = await resultsTable.getData();
+      await resultsTable.removeTable();
+
+      const duration = Date.now() - start;
+      console.log(`✅ Data retrieved in ${prettyDuration(start)}`);
+
+      return new Response(
+        JSON.stringify({
+          data: results,
+          duration,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    } catch (error) {
+      console.error("❌ Error:", error);
+      return new Response(
+        JSON.stringify({ error: String(error) }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+  }
+
   // Default 404
   return new Response("Not Found", { status: 404 });
 }
 
 // Start the server
-const PORT = 8000;
+const SERVER_URL = Deno.env.get("SERVER_URL");
+if (!SERVER_URL) {
+  throw new Error("SERVER_URL environment variable is not set");
+}
+const serverUrl = new URL(SERVER_URL);
+const PORT = parseInt(serverUrl.port) || 8000;
+const HOSTNAME = serverUrl.hostname;
 
 console.log("🔧 Starting server...");
 await initDB();
+console.log(`🌐 Server listening on ${SERVER_URL}`);
 
-Deno.serve({ port: PORT }, handler);
+Deno.serve({ port: PORT, hostname: HOSTNAME }, handler);

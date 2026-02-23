@@ -11,31 +11,42 @@ and result.
 
 ```
 🔍 Question:
-I love pastries, but I am allergic to eggs. What could I bake?
-
+I am looking for a fruity pastry for breakfast.
 
 📝 Answer:
-I found that the only pastry recipes in the data that do not call for eggs are **scones** and **Qatayef**.  
+The only pastry in the provided data that contains fruit and would be suitable for breakfast is **Apple Pie**. It uses sliced apples (such as Granny Smith or Honeycrisp) as the main fruit ingredient.
 
-- **Scones** use flour, sugar, baking powder, salt, cold butter, milk or cream, and optional vanilla.  
-- **Qatayef** use flour, baking powder, salt, water, milk, sugar, yeast, and a filling of cheese, nuts, or cream; no eggs are listed.
-
-Both can be made without any egg ingredients, so they would be suitable options for you to bake while avoiding eggs.
-
-⏱️ Query duration: 9873ms
+⏱️ Query duration: 8235ms
 📊 Rows searched: 10
 🧠 Thinking level: minimal
 🤖 Model used: gpt-oss:20b
 ```
 
+You can also return just the data, before it's passed to the LLM, which is way
+faster.
+
 ## How it works
 
 1. The data is loaded and converted to vectors (embeddings)
-2. When a question is asked, the question is converted to vectors as well
-3. The vectors are lists of numbers that are compared to find the data points
-   that are the closest semantically to the question
-4. The closest data points are sent to a LLM instructed to answer the question
+2. When a question is asked, two things happen in parallel:
+
+- A vector search
+  - The question is converted to vectors
+  - The question vectors are compared the original data vectors
+  - The closest data entries are kept
+- A BM25 search
+  - The words in the questions are searched in the original data text
+  - This search takes into accounts how many times the words are found and how
+    long are the data entries
+  - The most relevant data entries are kept
+
+3. Then the results of the vector and BM25 searches are reranked to prioritize
+   search results that are appearing high with both search technics.
+4. The selected data entries are sent to a LLM instructed to answer the question
    based only on the provided data, reducing the risk of hallucinations.
+
+On a technical note, indexes are created for the embeddings and for the BM25
+search. Data is cached locally. The reranking is a reciprocal rank fusion (RRF).
 
 ## How to run
 
@@ -46,64 +57,58 @@ Both can be made without any egg ingredients, so they would be suitable options 
   for the embeddings: `ollama pull nomic-embed-text`
 - Pull the [gpt-oss:20b](https://ollama.com/library/gpt-oss:20b) LLM model:
   `ollama pull gpt-oss:20b`
-- Create an `.env` file in the repository with the following:
-
-```bash
-OLLAMA=true
-AI_MODEL=gpt-oss:20b # Feel free to test others
-AI_EMBEDDINGS_MODEL=nomic-embed-text # Feel free to test others
-```
+- Create an `.env` file from the `.env.example`
 
 - Install all dependencies: `deno install`
-- Run `deno task server` in one terminal to load and keep the DB in memory. The
-  first time it runs, it will take longer to create, cache and index the
-  vectors. After that, it will be very fast. The DB will be written in the
-  `output` folder.
+- Run `deno task data` to load the data, create the embeddings and write the DB
+  to disk.
+- Run `deno task server` in one terminal to load and keep the DB in memory.
 - Run `deno task query` in another terminal to ask a default question. The first
   time, it will load the LLM in memory. After that, it will be faster. Ollama
   keeps models in memory for 5 minutes by default.
 
-To run custom queries:
+### Query Options
 
-- Rerun the query command with your question at the end, like so:
-  `deno task query "I am looking for a pastry with herbal flavours."`
-- You can specify the thinking level to be either `low` (default), `medium` or
-  `high`:
-  `deno task query "I am looking for a pastry with herbal flavours." -t high`
-- You can specify how many of the semantically closest data points you want to
-  pass to the LLM (default is 10):
-  `deno task query "I am looking for a pastry with herbal flavours." -t high -n 5`
+All query options can be combined. Here are the available parameters:
 
-If you want to have a look at the data, run `deno task sda` to run `main.ts` in
-watch mode. You can also use this script to create/process new data and write to
-disk. Then update the variables at the beginning of `server.ts` to use your
-dataset.
-
-If you want to start fresh and remove the cache, run `deno task clean`.
-
-## Using APIs
-
-If you want to use Gemini or Vertex, update your `.env` with these values:
+**Basic query with custom question:**
 
 ```bash
-AI_KEY=your_key # For Gemini
-AI_MODEL=gemini-3-flash-preview # Needs a thinking model for now
-AI_PROJECT=your_project # For Vertex
-AI_LOCATION=your_project_location # For Vertex
-AI_EMBEDDINGS_MODEL=gemini-embedding-001 # Or other
+deno task query "I am looking for a pastry with herbal flavours."
 ```
 
-For Vertex, you'll need to be authenticated with
-[Google Cloud CLI on your machine](https://docs.cloud.google.com/docs/authentication/gcloud).
+**Thinking level** (`-t` or `--thinking`): Controls the depth of reasoning the
+LLM uses. Options: `minimal`, `low`, `medium`, `high`
 
-If you want to use an Ollama embedding model but a Gemini LLM, uncomment the
-`Ollama` option for the `aiEmbeddings` method and the `ollamaEmbeddings` option
-for the `aiRAG` method, both in the `server.ts` file.
+```bash
+deno task query "What dessert has chocolate?" -t high
+```
 
-For more information, check the
-[simple-data-analysis documentation](https://jsr.io/@nshiab/simple-data-analysis),
-more specifically the
-[aiRAG method](https://jsr.io/@nshiab/simple-data-analysis/doc/~/SimpleTable.prototype.aiRAG).
+**Number of results** (`-n` or `--numDocs`): How many semantically closest data
+points to pass to the LLM (default: 10)
+
+```bash
+deno task query "What dessert has chocolate?" -n 5
+```
+
+**Endpoint** (`-e` or `--endpoint`): Choose between `query` (default - uses LLM
+to answer) or `data` (returns just the search results without LLM, much faster)
+
+```bash
+# Get LLM-generated answer
+deno task query "desserts with chocolate" -e query
+
+# Get just the matching data without LLM processing
+deno task query "desserts with chocolate" -e data
+```
+
+**Combined example:**
+
+```bash
+deno task query "I am looking for a pastry with herbal flavours." -t high -n 5 -e query
+```
+
+If you want to start fresh and remove the cache, run `deno task clean`.
 
 ## Questions? Comments?
 

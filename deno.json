@@ -2,13 +2,13 @@
   "tasks": {
     "server": "deno run --env-file --node-modules-dir=auto -A sda/server.ts",
     "query": "deno run --env-file --node-modules-dir=auto -A sda/client.ts",
-    "sda": "deno run --env-file --node-modules-dir=auto -A --watch sda/main.ts",
+    "data": "deno run --env-file --node-modules-dir=auto -A sda/data.ts",
     "clean": "rm -rf .sda-cache && rm -rf .journalism-cache && rm -rf .tmp && rm -rf sda/output"
   },
   "nodeModulesDir": "auto",
   "imports": {
-    "@nshiab/journalism": "jsr:@nshiab/journalism@^2.2.7",
-    "@nshiab/simple-data-analysis": "jsr:@nshiab/simple-data-analysis@^5.14.4"
+    "@nshiab/journalism": "jsr:@nshiab/journalism@^2.3.1",
+    "@nshiab/simple-data-analysis": "jsr:@nshiab/simple-data-analysis@^5.17.1"
   },
   "allowScripts": ["npm:playwright-chromium@1.58.2", "npm:protobufjs@7.5.4"]
 }

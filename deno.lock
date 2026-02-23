@@ -6,15 +6,16 @@
     "jsr:@nshiab/journalism-dataviz@^1.0.3": "1.0.3",
     "jsr:@nshiab/journalism-extras@^1.0.2": "1.0.2",
     "jsr:@nshiab/journalism-finance@^1.1.0": "1.1.0",
-    "jsr:@nshiab/journalism-format@^1.0.2": "1.0.3",
-    "jsr:@nshiab/journalism-format@^1.0.3": "1.0.3",
+    "jsr:@nshiab/journalism-format@^1.0.2": "1.1.1",
+    "jsr:@nshiab/journalism-format@^1.0.3": "1.1.1",
+    "jsr:@nshiab/journalism-format@^1.1.1": "1.1.1",
     "jsr:@nshiab/journalism-geo@^1.0.3": "1.0.3",
     "jsr:@nshiab/journalism-google@^1.0.4": "1.0.4",
     "jsr:@nshiab/journalism-statistics@^1.0.2": "1.0.2",
     "jsr:@nshiab/journalism-web-scraping@^1.0.2": "1.0.2",
     "jsr:@nshiab/journalism-web@^1.0.1": "1.0.1",
-    "jsr:@nshiab/journalism@^2.2.7": "2.2.7",
-    "jsr:@nshiab/simple-data-analysis@^5.14.4": "5.14.4",
+    "jsr:@nshiab/journalism@^2.3.1": "2.3.1",
+    "jsr:@nshiab/simple-data-analysis@^5.17.1": "5.17.1",
     "npm:@duckdb/node-api@1.4.4-r.1": "1.4.4-r.1",
     "npm:@google-cloud/storage@^7.19.0": "7.19.0",
     "npm:@google/genai@^1.41.0": "1.41.0",
@@ -27,7 +28,7 @@
     "npm:fflate@~0.8.2": "0.8.2",
     "npm:geotiff@^3.0.2": "3.0.2",
     "npm:google-auth-library@^10.5.0": "10.5.0",
-    "npm:google-spreadsheet@^5.1.0": "5.1.0_google-auth-library@10.5.0",
+    "npm:google-spreadsheet@^5.1.0": "5.2.0_google-auth-library@10.5.0",
     "npm:iconv-lite@~0.7.2": "0.7.2",
     "npm:jsonrepair@^3.13.2": "3.13.2",
     "npm:jstat@^1.9.6": "1.9.6",
@@ -36,15 +37,15 @@
     "npm:zod@^4.3.6": "4.3.6"
   },
   "jsr": {
-    "@nshiab/journalism@2.2.7": {
-      "integrity": "a25f99952bf70b670a3b86829fdc840ef99e156b7c8e5d24737047bf5dd04b30",
+    "@nshiab/journalism@2.3.1": {
+      "integrity": "5da8744652e8d15a228c29f1cad965c0b10cb9e91e561f369974d409658ea722",
       "dependencies": [
         "jsr:@nshiab/journalism-ai",
         "jsr:@nshiab/journalism-climate",
         "jsr:@nshiab/journalism-dataviz",
         "jsr:@nshiab/journalism-extras",
         "jsr:@nshiab/journalism-finance",
-        "jsr:@nshiab/journalism-format@^1.0.3",
+        "jsr:@nshiab/journalism-format@^1.1.1",
         "jsr:@nshiab/journalism-geo",
         "jsr:@nshiab/journalism-google",
         "jsr:@nshiab/journalism-statistics",
@@ -91,8 +92,8 @@
         "jsr:@nshiab/journalism-format@^1.0.2"
       ]
     },
-    "@nshiab/journalism-format@1.0.3": {
-      "integrity": "27959c59abe5c2ccce74160b13f6260db9de4bc99cc1ada06501df5718f88ceb",
+    "@nshiab/journalism-format@1.1.1": {
+      "integrity": "930199305d3310a9b12f366435994b37dadd0b5c46cd5199fe596cf32e0ba4c1",
       "dependencies": [
         "npm:d3-dsv",
         "npm:date-fns-tz"
@@ -137,12 +138,12 @@
         "npm:playwright-chromium"
       ]
     },
-    "@nshiab/simple-data-analysis@5.14.4": {
-      "integrity": "1f4ffc54c61b267fbf1983145cc9ed84738dbb9d4b7d7877857d32de9834f9fe",
+    "@nshiab/simple-data-analysis@5.17.1": {
+      "integrity": "26ada0675e4c8b3ebb655f3e1b4512a3593fb475f057c376d1f203b72a587462",
       "dependencies": [
         "jsr:@nshiab/journalism-ai",
         "jsr:@nshiab/journalism-dataviz",
-        "jsr:@nshiab/journalism-format@^1.0.3",
+        "jsr:@nshiab/journalism-format@^1.1.1",
         "jsr:@nshiab/journalism-google",
         "npm:@duckdb/node-api",
         "npm:d3-dsv",
@@ -755,8 +756,8 @@
     "google-logging-utils@1.1.3": {
       "integrity": "sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA=="
     },
-    "google-spreadsheet@5.1.0_google-auth-library@10.5.0": {
-      "integrity": "sha512-RODtEsyKaMhhDP2d9uMkK1VTEn07EHl76B+OSLygc/TgewgK7oSImTbyfPhma+Q5a1ttBmM6Hd9jRAA3seCY5w==",
+    "google-spreadsheet@5.2.0_google-auth-library@10.5.0": {
+      "integrity": "sha512-sqQN+o0fxR5tfjFYKOuqgNFYKI/3uYT1TjLVUnN5SRckcR931szYjmvRvgN1QJ8VE2R6TlDuiFZ7LmfXvEKTyA==",
       "dependencies": [
         "es-toolkit",
         "google-auth-library@10.5.0",
@@ -1257,8 +1258,8 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@nshiab/journalism@^2.2.7",
-      "jsr:@nshiab/simple-data-analysis@^5.14.4"
+      "jsr:@nshiab/journalism@^2.3.1",
+      "jsr:@nshiab/simple-data-analysis@^5.17.1"
     ]
   }
 }
