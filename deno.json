@@ -8,7 +8,7 @@
   "nodeModulesDir": "auto",
   "imports": {
     "@nshiab/journalism": "jsr:@nshiab/journalism@^2.3.2",
-    "@nshiab/simple-data-analysis": "jsr:@nshiab/simple-data-analysis@^5.17.4"
+    "@nshiab/simple-data-analysis": "jsr:@nshiab/simple-data-analysis@^5.17.6"
   },
   "allowScripts": ["npm:playwright-chromium@1.58.2", "npm:protobufjs@7.5.4"]
 }

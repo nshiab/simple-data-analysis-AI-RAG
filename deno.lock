@@ -15,7 +15,7 @@
     "jsr:@nshiab/journalism-web-scraping@^1.0.2": "1.0.2",
     "jsr:@nshiab/journalism-web@^1.0.1": "1.0.1",
     "jsr:@nshiab/journalism@^2.3.2": "2.3.2",
-    "jsr:@nshiab/simple-data-analysis@^5.17.4": "5.17.4",
+    "jsr:@nshiab/simple-data-analysis@^5.17.6": "5.17.6",
     "npm:@duckdb/node-api@1.4.4-r.1": "1.4.4-r.1",
     "npm:@google-cloud/storage@^7.19.0": "7.19.0",
     "npm:@google/genai@^1.41.0": "1.41.0",
@@ -138,8 +138,8 @@
         "npm:playwright-chromium"
       ]
     },
-    "@nshiab/simple-data-analysis@5.17.4": {
-      "integrity": "6ce0b5ecb9b89445fbe326e20ab3ba22fa6d0659fdb42044b2e4aa3df8bc9267",
+    "@nshiab/simple-data-analysis@5.17.6": {
+      "integrity": "fbcf513d3731c724d3c8a92ec36e8ec63e36e837f52d0ad69948ad70b0a87e3f",
       "dependencies": [
         "jsr:@nshiab/journalism-ai",
         "jsr:@nshiab/journalism-dataviz",
@@ -1259,7 +1259,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@nshiab/journalism@^2.3.2",
-      "jsr:@nshiab/simple-data-analysis@^5.17.4"
+      "jsr:@nshiab/simple-data-analysis@^5.17.6"
     ]
   }
 }
