@@ -19,7 +19,7 @@ if (!columnId || !columnText || !dbPath) {
   );
 }
 
-const sdb = new SimpleDB();
+const sdb = new SimpleDB({ logDuration: true });
 
 // Load the data from a parquet file
 // Note: The table name "data" is required as the server looks for this specific table name
