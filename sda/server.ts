@@ -98,6 +98,7 @@ async function handler(req: Request): Promise<Response> {
         {
           cache: true,
           verbose: true,
+          includeThoughts: typeof thinking !== "undefined",
           thinkingLevel: thinking,
           modelContextWindow,
           ollamaEmbeddings: true, // This forces to use Ollama embeddings even if using Gemini/Vertex for the LLM
